@@ -1,0 +1,9 @@
+0000000000000000000000000000000000000000 f561a095e3f52ecc96602d457d1dcae43764f0a9 gusahlg <gusahlg@gmail.com> 1765899922 +0100	commit (initial): Initial commit
+f561a095e3f52ecc96602d457d1dcae43764f0a9 f0f3ba36b5fc07f968501c32ec66a6f546ceabf2 gusahlg <gusahlg@gmail.com> 1766429988 +0100	commit: Good initial setup
+f0f3ba36b5fc07f968501c32ec66a6f546ceabf2 a270d91175ae8646c6b60e305f397f8f5977ba4d gusahlg <gusahlg@gmail.com> 1766430223 +0100	commit: All files included this time
+a270d91175ae8646c6b60e305f397f8f5977ba4d 655587a77d53e5428052df13ee0ed68c6529aeb4 gusahlg <gusahlg@gmail.com> 1766762154 +0100	pull: Fast-forward
+655587a77d53e5428052df13ee0ed68c6529aeb4 f14cf7e73a5d57142605b2cad5f961708da6a299 gusahlg <gusahlg@gmail.com> 1766763295 +0100	pull --rebase origin master (start): checkout f14cf7e73a5d57142605b2cad5f961708da6a299
+f14cf7e73a5d57142605b2cad5f961708da6a299 f14cf7e73a5d57142605b2cad5f961708da6a299 gusahlg <gusahlg@gmail.com> 1766763295 +0100	pull --rebase origin master (finish): returning to refs/heads/master
+f14cf7e73a5d57142605b2cad5f961708da6a299 a8454512284d1647d07ffc7c212f90097e121db9 gusahlg <gusahlg@gmail.com> 1766862551 +0100	commit: Working vim command mode
+a8454512284d1647d07ffc7c212f90097e121db9 af2bd2487d02ad8588baf8543e7d7a0a6bb9a079 gusahlg <gusahlg@gmail.com> 1767454409 +0100	commit: Fixed some stuff and added in more bindings for convenience
+af2bd2487d02ad8588baf8543e7d7a0a6bb9a079 d4529d345d8d112e0aaacef6ce2122e38f3f8035 gusahlg <gusahlg@gmail.com> 1769626984 +0100	commit: New version, eternal happiness not included
