@@ -10,16 +10,11 @@ browser="firefox"
 # -------------------------
 # Startup (match your exec-once)
 # -------------------------
-riverctl spawn waybar
-riverctl spawn hyprpaper
 riverctl keyboard-layout se
-
-# clipboard history
-riverctl spawn 'wl-paste --type text  --watch cliphist store'
-riverctl spawn 'wl-paste --type image --watch cliphist store'
+exec-once = tmux start-server
 
 # your update script (same idea as Hyprland)
-riverctl spawn "$terminal -e sh -lc '~/.config/hypr/scripts/update-system.sh'"
+riverctl spawn "$terminal -e sh -lc '~/.local/share/update-system'"
 
 # -------------------------
 # Layout generator (tiling)
@@ -29,7 +24,6 @@ riverctl output-layout rivertile
 
 # -------------------------
 # “Workspace” model in river = tags (bitmask)
-# We'll map 1..9,0 to 10 like your Hyprland setup.
 # -------------------------
 tag1=$((1<<0))
 tag2=$((1<<1))
@@ -47,59 +41,55 @@ mod=Super
 # -------------------------
 # Basic workflow binds
 # -------------------------
-riverctl map normal $mod Return spawn "$terminal"
+riverctl map normal $mod Q spawn "$terminal"
 riverctl map normal $mod R      spawn "$menu"
 riverctl map normal $mod T      spawn "$browser"
 riverctl map normal $mod E      spawn "$fileManager"
-riverctl map normal $mod P      spawn ./home/gusahlg/.config/river/miner.sh
 
 riverctl map normal $mod C close
 riverctl map normal $mod M exit
 
-# Focus / move (your HJKL “movefocus” vibe)
+# Focus / move
 riverctl map normal $mod H focus-view previous
 riverctl map normal $mod L focus-view next
 riverctl map normal $mod K focus-view previous
 riverctl map normal $mod J focus-view next
 
-# Swap windows (move window in layout)
+# Swap windows
 riverctl map normal $mod+Shift H swap previous
 riverctl map normal $mod+Shift L swap next
 riverctl map normal $mod+Shift K swap previous
 riverctl map normal $mod+Shift J swap next
 
-# Floating toggle (closest to Hyprland togglefloating)
-riverctl map normal $mod V toggle-float
-
-# Mouse drag move/resize (like bindm in Hyprland)
+# Mouse drag move/resize
 riverctl map-pointer normal $mod BTN_LEFT  move-view
 riverctl map-pointer normal $mod BTN_RIGHT resize-view
 
 # -------------------------
-# Your tmux helpers (same sessions)
+# Your tmux helpers
 # -------------------------
-tmux_repo="$terminal -e sh -lc 'cd ~/repos && tmux new-session -A -s repos -c ~/repos'"
-tmux_hypr="$terminal -e sh -lc 'cd ~/.config/hypr && tmux new-session -A -s hypr -c ~/.config/hypr'"
+tmux_repo="$terminal -e sh -lc '~/.local/share/tmux-start repos'"
+tmux_conf="$terminal -e sh -lc '~/.local/share/tmux-start configs'"
+tmux_main="$terminal -e sh -lc '~/.local/share/tmux-start main'"
 
-riverctl map normal $mod Q spawn $terminal
+riverctl map normal $mod+Tab Q spawn "$tmux_main"
 
-# Optional “submap-like” quick menu: just bind direct keys for now
-riverctl map normal $mod Escape spawn "$tmux_repo"
-riverctl map normal $mod Tab    spawn "$tmux_hypr"
+riverctl map normal $mod+Tab 2 spawn "$tmux_repo"
+riverctl map normal $mod+Tab 1 spawn "$tmux_conf"
 
-# Night light script you already have
-riverctl map normal $mod F1 spawn "~/.config/hypr/scripts/night-light.sh"
+# Night light
+riverctl map normal $mod F1 spawn "~/.local/share/night-light"
 
-# Screenshot (same command you used)
+# Screenshot
 riverctl map normal $mod Z spawn "sh -c 'grim -g \"\$(slurp)\" - | tee ~/Pictures/Screenshots/\$(date +%Y-%m-%d_%H-%M-%S).png | wl-copy'"
 
 # Recording scripts
-riverctl map normal $mod X      spawn "~/.config/hypr/scripts/rec.sh"
-riverctl map normal $mod+Shift X spawn "~/.config/hypr/scripts/rec-stop.sh"
+riverctl map normal $mod X       spawn "~/.local/share/rec"
+riverctl map normal $mod+Shift X spawn "~/.local/share/rec-stop"
 
 # -------------------------
 # Tags = workspaces
-# Focus tags
+# -------------------------
 riverctl map normal $mod 1 set-focused-tags $tag1
 riverctl map normal $mod 2 set-focused-tags $tag2
 riverctl map normal $mod 3 set-focused-tags $tag3
@@ -111,7 +101,6 @@ riverctl map normal $mod 8 set-focused-tags $tag8
 riverctl map normal $mod 9 set-focused-tags $tag9
 riverctl map normal $mod 0 set-focused-tags $tag10
 
-# Move active window to tag (like movetoworkspace)
 riverctl map normal $mod+Shift 1 set-view-tags $tag1
 riverctl map normal $mod+Shift 2 set-view-tags $tag2
 riverctl map normal $mod+Shift 3 set-view-tags $tag3
@@ -124,7 +113,7 @@ riverctl map normal $mod+Shift 9 set-view-tags $tag9
 riverctl map normal $mod+Shift 0 set-view-tags $tag10
 
 # -------------------------
-# Media keys (same commands)
+# Media keys
 # -------------------------
 riverctl map normal None XF86AudioRaiseVolume spawn "wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
 riverctl map normal None XF86AudioLowerVolume spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
@@ -138,4 +127,5 @@ riverctl map normal None XF86AudioNext  spawn "playerctl next"
 riverctl map normal None XF86AudioPrev  spawn "playerctl previous"
 riverctl map normal None XF86AudioPlay  spawn "playerctl play-pause"
 riverctl map normal None XF86AudioPause spawn "playerctl play-pause"
+
 
