@@ -1,0 +1,26 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 28,
+
+  "modules-left": [
+    "river/tags",
+    "river/mode"
+  ],
+
+  "modules-right": [
+    "clock"
+  ],
+
+  "river/tags": {
+    "num-tags": 10
+  },
+
+  "river/mode": {
+    "format": "MODE: {}"
+  },
+
+  "clock": {
+    "format": "{:%H:%M}"
+  }
+}

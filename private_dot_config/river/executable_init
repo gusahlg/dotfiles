@@ -1,131 +1,98 @@
 #!/bin/sh
-# -------------------------
-# Apps (match your Hyprland vars)
-# -------------------------
-terminal="alacritty"
-fileManager="thunar"
-menu="wofi --show drun"
-browser="firefox"
+set -eu
 
-# -------------------------
-# Startup (match your exec-once)
-# -------------------------
+mod="Super"
+
+# ─── Input ───────────────────────────────────────────────────────────
 riverctl keyboard-layout se
-exec-once = tmux start-server
 
-# your update script (same idea as Hyprland)
-riverctl spawn "$terminal -e sh -lc '~/.local/share/update-system'"
+# ─── Appearance ──────────────────────────────────────────────────────
+riverctl border-width 3
+riverctl border-color-focused 0xC8324BCC
+riverctl border-color-unfocused 0x00C89659
 
-# -------------------------
-# Layout generator (tiling)
-# -------------------------
-riverctl spawn rivertile
-riverctl output-layout rivertile
+# ─── Core keybindings ────────────────────────────────────────────────
+riverctl map normal "$mod" Q spawn alacritty
+riverctl map normal "$mod" R spawn "wofi --show drun"
+riverctl map normal "$mod" T spawn firefox
+riverctl map normal "$mod" E spawn thunar
+riverctl map normal "$mod" C close
+riverctl map normal "$mod" M exit
+riverctl map normal "$mod" V toggle-float
 
-# -------------------------
-# “Workspace” model in river = tags (bitmask)
-# -------------------------
-tag1=$((1<<0))
-tag2=$((1<<1))
-tag3=$((1<<2))
-tag4=$((1<<3))
-tag5=$((1<<4))
-tag6=$((1<<5))
-tag7=$((1<<6))
-tag8=$((1<<7))
-tag9=$((1<<8))
-tag10=$((1<<9))
+# ─── Focus / swap ────────────────────────────────────────────────────
+riverctl map normal "$mod" H focus-view previous
+riverctl map normal "$mod" L focus-view next
+riverctl map normal "$mod" K focus-view previous
+riverctl map normal "$mod" J focus-view next
 
-mod=Super
+riverctl map normal "$mod+Shift" H swap previous
+riverctl map normal "$mod+Shift" L swap next
+riverctl map normal "$mod+Shift" K swap previous
+riverctl map normal "$mod+Shift" J swap next
 
-# -------------------------
-# Basic workflow binds
-# -------------------------
-riverctl map normal $mod Q spawn "$terminal"
-riverctl map normal $mod R      spawn "$menu"
-riverctl map normal $mod T      spawn "$browser"
-riverctl map normal $mod E      spawn "$fileManager"
+# ─── Mouse ───────────────────────────────────────────────────────────
+riverctl map-pointer normal "$mod" BTN_LEFT move-view
+riverctl map-pointer normal "$mod" BTN_RIGHT resize-view
 
-riverctl map normal $mod C close
-riverctl map normal $mod M exit
+# ─── Tags (workspaces 1-10) ─────────────────────────────────────────
+i=1
+while [ $i -le 10 ]; do
+  tag=$((1 << (i - 1)))
+  key=$i
+  [ "$i" -eq 10 ] && key=0
+  riverctl map normal "$mod" "$key" set-focused-tags "$tag"
+  riverctl map normal "$mod+Shift" "$key" set-view-tags "$tag"
+  i=$((i + 1))
+done
 
-# Focus / move
-riverctl map normal $mod H focus-view previous
-riverctl map normal $mod L focus-view next
-riverctl map normal $mod K focus-view previous
-riverctl map normal $mod J focus-view next
+# ─── Modes ───────────────────────────────────────────────────────────
+riverctl declare-mode sessions
+riverctl declare-mode projects
 
-# Swap windows
-riverctl map normal $mod+Shift H swap previous
-riverctl map normal $mod+Shift L swap next
-riverctl map normal $mod+Shift K swap previous
-riverctl map normal $mod+Shift J swap next
+# Sessions mode (Super+Tab): attach to tmux sessions
+riverctl map normal "$mod" Tab enter-mode sessions
+riverctl map sessions None 1 spawn "alacritty -e $HOME/.local/share/tmux-start main"
+riverctl map sessions None 2 spawn "alacritty -e $HOME/.local/share/tmux-start repos"
+riverctl map sessions None 3 spawn "alacritty -e $HOME/.local/share/tmux-start configs"
+riverctl map sessions None Escape enter-mode normal
 
-# Mouse drag move/resize
-riverctl map-pointer normal $mod BTN_LEFT  move-view
-riverctl map-pointer normal $mod BTN_RIGHT resize-view
+# Projects mode (Super+Escape): open terminal in project directories
+riverctl map normal "$mod" Escape enter-mode projects
+riverctl map projects None 1 spawn "alacritty --working-directory $HOME/repos"
+riverctl map projects None 2 spawn "alacritty --working-directory $HOME/.config"
+riverctl map projects None Escape enter-mode normal
 
-# -------------------------
-# Your tmux helpers
-# -------------------------
-tmux_repo="$terminal -e sh -lc '~/.local/share/tmux-start repos'"
-tmux_conf="$terminal -e sh -lc '~/.local/share/tmux-start configs'"
-tmux_main="$terminal -e sh -lc '~/.local/share/tmux-start main'"
+# ─── Utilities ───────────────────────────────────────────────────────
+riverctl map normal "$mod" F1 spawn "$HOME/.local/share/night-light"
 
-riverctl map normal $mod+Tab Q spawn "$tmux_main"
+if command -v grim >/dev/null 2>&1 && command -v slurp >/dev/null 2>&1; then
+  riverctl map normal "$mod" Z spawn "sh -c 'mkdir -p $HOME/Pictures/Screenshots && grim -g \"\$(slurp)\" - | tee $HOME/Pictures/Screenshots/\$(date +%Y-%m-%d_%H-%M-%S).png | wl-copy'"
+fi
 
-riverctl map normal $mod+Tab 2 spawn "$tmux_repo"
-riverctl map normal $mod+Tab 1 spawn "$tmux_conf"
+riverctl map normal "$mod" X spawn "$HOME/.local/share/rec"
+riverctl map normal "$mod+Shift" X spawn "$HOME/.local/share/rec-stop"
 
-# Night light
-riverctl map normal $mod F1 spawn "~/.local/share/night-light"
-
-# Screenshot
-riverctl map normal $mod Z spawn "sh -c 'grim -g \"\$(slurp)\" - | tee ~/Pictures/Screenshots/\$(date +%Y-%m-%d_%H-%M-%S).png | wl-copy'"
-
-# Recording scripts
-riverctl map normal $mod X       spawn "~/.local/share/rec"
-riverctl map normal $mod+Shift X spawn "~/.local/share/rec-stop"
-
-# -------------------------
-# Tags = workspaces
-# -------------------------
-riverctl map normal $mod 1 set-focused-tags $tag1
-riverctl map normal $mod 2 set-focused-tags $tag2
-riverctl map normal $mod 3 set-focused-tags $tag3
-riverctl map normal $mod 4 set-focused-tags $tag4
-riverctl map normal $mod 5 set-focused-tags $tag5
-riverctl map normal $mod 6 set-focused-tags $tag6
-riverctl map normal $mod 7 set-focused-tags $tag7
-riverctl map normal $mod 8 set-focused-tags $tag8
-riverctl map normal $mod 9 set-focused-tags $tag9
-riverctl map normal $mod 0 set-focused-tags $tag10
-
-riverctl map normal $mod+Shift 1 set-view-tags $tag1
-riverctl map normal $mod+Shift 2 set-view-tags $tag2
-riverctl map normal $mod+Shift 3 set-view-tags $tag3
-riverctl map normal $mod+Shift 4 set-view-tags $tag4
-riverctl map normal $mod+Shift 5 set-view-tags $tag5
-riverctl map normal $mod+Shift 6 set-view-tags $tag6
-riverctl map normal $mod+Shift 7 set-view-tags $tag7
-riverctl map normal $mod+Shift 8 set-view-tags $tag8
-riverctl map normal $mod+Shift 9 set-view-tags $tag9
-riverctl map normal $mod+Shift 0 set-view-tags $tag10
-
-# -------------------------
-# Media keys
-# -------------------------
+# ─── Media keys ──────────────────────────────────────────────────────
 riverctl map normal None XF86AudioRaiseVolume spawn "wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
 riverctl map normal None XF86AudioLowerVolume spawn "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-riverctl map normal None XF86AudioMute        spawn "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-riverctl map normal None XF86AudioMicMute     spawn "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+riverctl map normal None XF86AudioMute spawn "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+riverctl map normal None XF86AudioMicMute spawn "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
 
-riverctl map normal None XF86MonBrightnessUp   spawn "brightnessctl -e4 -n2 set 5%+"
+riverctl map normal None XF86MonBrightnessUp spawn "brightnessctl -e4 -n2 set 5%+"
 riverctl map normal None XF86MonBrightnessDown spawn "brightnessctl -e4 -n2 set 5%-"
 
-riverctl map normal None XF86AudioNext  spawn "playerctl next"
-riverctl map normal None XF86AudioPrev  spawn "playerctl previous"
-riverctl map normal None XF86AudioPlay  spawn "playerctl play-pause"
+riverctl map normal None XF86AudioNext spawn "playerctl next"
+riverctl map normal None XF86AudioPrev spawn "playerctl previous"
+riverctl map normal None XF86AudioPlay spawn "playerctl play-pause"
 riverctl map normal None XF86AudioPause spawn "playerctl play-pause"
 
+# ─── Layout ──────────────────────────────────────────────────────────
+riverctl default-layout rivertile
+riverctl spawn rivertile
 
+# ─── Autostart ───────────────────────────────────────────────────────
+riverctl spawn waybar
+riverctl spawn "wl-paste --type text --watch cliphist store"
+riverctl spawn "wl-paste --type image --watch cliphist store"
+riverctl spawn "tmux start-server"
