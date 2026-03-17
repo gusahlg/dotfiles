@@ -49,6 +49,7 @@ done
 # ─── Modes ───────────────────────────────────────────────────────────
 riverctl declare-mode sessions
 riverctl declare-mode projects
+riverctl declare-mode tile_ratio
 
 # Sessions mode (Super+Tab): attach to tmux sessions
 riverctl map normal "$mod" Tab enter-mode sessions
@@ -89,7 +90,12 @@ riverctl map normal None XF86AudioPause spawn "playerctl play-pause"
 
 # ─── Layout ──────────────────────────────────────────────────────────
 riverctl default-layout rivertile
-riverctl spawn rivertile
+riverctl spawn "rivertile -view-padding 0 -outer-padding 0"
+
+riverctl map normal "$mod" B enter-mode tile_ratio
+riverctl map tile_ratio "$mod" H send-layout-cmd rivertile "main-ratio -0.05"
+riverctl map tile_ratio "$mod" L send-layout-cmd rivertile "main-ratio +0.05"
+riverctl map tile_ratio "$mod" B enter-mode normal
 
 # ─── Autostart ───────────────────────────────────────────────────────
 riverctl spawn waybar

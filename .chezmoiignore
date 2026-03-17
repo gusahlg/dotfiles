@@ -1,0 +1,3 @@
+# Don't manage nvim's own git repo
+.config/nvim/.git
+.config/nvim/.git/**
