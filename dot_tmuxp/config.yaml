@@ -1,0 +1,30 @@
+session_name: config
+
+windows:
+  - window_name: nix
+    start_directory: /etc/nixos
+    layout: main-vertical
+    panes:
+      - fish
+      - sudoedit /etc/nixos/configuration.nix
+
+  - window_name: usr-config
+    start_directory: ~/.config
+    layout: main-vertical
+    panes:
+      - fish
+      - nvim .
+
+  - window_name: chezmoi
+    start_directory: ~/.local/share/chezmoi
+    layout: main-vertical
+    panes:
+      - fish
+      - nvim .
+
+  - window_name: development
+    start_directory: ~/
+    layout: even-vertical
+    panes:
+      - codex
+      - fish .

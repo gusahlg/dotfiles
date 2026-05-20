@@ -1,0 +1,19 @@
+session_name: ${SESSION_NAME}
+start_directory: ${PROJECT_DIR}
+
+windows:
+  - window_name: review
+    panes:
+        - codex
+
+  - window_name: nvim
+    panes:
+        - nvim .
+
+  - window_name: prompts
+    panes:
+        - git status
+
+  - window_name: file-manager
+    panes:
+        - nnn

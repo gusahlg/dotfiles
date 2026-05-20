@@ -1,0 +1,11 @@
+#!/usr/bin/env fish
+
+set name $argv[1]
+
+# if it exists -> attach, else load
+if tmux has-session -t "$name" 2>/dev/null
+    exec tmux attach -t "$name"
+    exit 0
+end
+
+tmuxp load -y "$HOME/.tmuxp/$name.yaml"
